@@ -346,7 +346,7 @@ class ProductVariation_OrderItem extends Product_OrderItem
         if (($this->ProductVariation()) && $this->ProductVariation()->Image()->exists()) {
             return $this->ProductVariation()->Image();
         }
-        return $this->Product(true)->Image();
+        return $this->Product()->Image();
     }
 
     public function Width() {
