@@ -407,6 +407,9 @@ class Order extends DataObject
             $components = OrderItemList::create(OrderItem::class, 'OrderID');
             $components->setDataQuery($query);
             $components = $components->forForeignID($this->ID);
+            // SS6.1 per-request query cache: the cart sidebar, every modifier's exists()/iteration and listing cart
+            // checks all re-read Items(). Caching collapses those; auto-invalidated when an item is written.
+            $components = $components->setUseCache(true);
         }
 
         return $components;

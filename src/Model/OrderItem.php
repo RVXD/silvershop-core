@@ -74,7 +74,15 @@ class OrderItem extends OrderAttribute
      */
     public function Buyable()
     {
-        return $this->{self::config()->get('buyable_relationship')}();
+        $relation = self::config()->get('buyable_relationship');
+        $id = (int) $this->getField($relation . 'ID');
+        if ($id < 1) {
+            return $this->{$relation}();
+        }
+        // SS6.1 per-request query cache: the cart calculation and template render ask every line item for its
+        // Buyable() many times (often via fresh OrderItem instances), and this collapses those into one query.
+        $class = $this->getSchema()->hasOneComponent(static::class, $relation);
+        return $class ? $class::get()->setUseCache(true)->byID($id) : $this->{$relation}();
     }
 
     /**
